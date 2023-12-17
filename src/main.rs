@@ -1,3 +1,4 @@
+use std::env;
 use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
 use arrivals::init_arrivals_scope;
 use dotenv::dotenv;
