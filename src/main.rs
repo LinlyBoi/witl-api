@@ -17,7 +17,7 @@ async fn main() -> std::io::Result<()> {
             .service(arrivals::init_arrivals_scope())
             .app_data(web::Data::new(init_dbpool()))
     })
-    .bind(("localhost", 8080))?
+    .bind(init_address())?
     .run()
     .await
 }
