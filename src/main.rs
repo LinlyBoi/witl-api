@@ -5,10 +5,7 @@ use witl_api::*;
 async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
 }
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
+mod arrivals;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
