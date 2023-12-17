@@ -22,7 +22,7 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
         .fetch_all(db_pool.get_ref())
         .await
         .expect("Could not fetch arrivals");
-    HttpResponse::Ok()
+	HttpResponse::Ok()
         .content_type("application/json")
         .json(arrivals)
 }
