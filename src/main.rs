@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use witl_api::*;
 #[post("/echo")]
@@ -10,7 +10,7 @@ mod arrivals;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    let (port, address) = init_address();
+    std::env::set_var("RUST_LOG", "debug");
     HttpServer::new(|| {
         App::new()
             .service(echo)
