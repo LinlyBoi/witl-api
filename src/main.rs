@@ -13,7 +13,6 @@ async fn main() -> std::io::Result<()> {
     let (port, address) = init_address();
     HttpServer::new(|| {
         App::new()
-            .service(hello)
             .service(echo)
             .service(arrivals::init_arrivals_scope())
             .app_data(web::Data::new(init_dbpool()))
