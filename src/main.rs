@@ -1,4 +1,5 @@
 use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
+use arrivals::init_arrivals_scope;
 use dotenv::dotenv;
 use witl_api::*;
 #[post("/echo")]
@@ -21,8 +22,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(echo)
-            .service(arrivals::init_arrivals_scope())
-            .app_data(web::Data::new(init_dbpool()))
+            .service(init_arrivals_scope())
+            .app_data(web::Data::new(pool.clone()))
     })
     .bind(init_address())?
     .run()
