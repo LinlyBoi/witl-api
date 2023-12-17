@@ -12,6 +12,12 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
+    let database_url = env::var("DATABASE_URL").expect("Put a DB url in the .env file dumbass");
+    let pool = sqlx::postgres::PgPoolOptions::new()
+        .max_connections(10)
+        .connect(database_url.as_str())
+        .await
+        .expect("No pool connection man :(");
     HttpServer::new(|| {
         App::new()
             .service(echo)
