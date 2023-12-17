@@ -15,6 +15,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(hello)
             .service(echo)
+            .service(arrivals::init_arrivals_scope())
             .app_data(web::Data::new(init_dbpool()))
     })
     .bind(("localhost", 8080))?
