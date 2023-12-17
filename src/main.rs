@@ -11,6 +11,7 @@ mod arrivals;
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     std::env::set_var("RUST_LOG", "debug");
+    env_logger::init();
     HttpServer::new(|| {
         App::new()
             .service(echo)
