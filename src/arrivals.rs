@@ -14,6 +14,7 @@ pub struct Arrival {
     tram_line: i32,
     direction: bool,
 }
+
 use web::Data;
 use sqlx::{PgPool, query_as, query};
 #[get("all")]
@@ -29,20 +30,33 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
 }
 
 #[get("specific")]
-async fn show_specific(db_pool: Data<PgPool>, type_arr: Vec<u8>) -> impl Responder {
+async fn show_specific(db_pool: Data<PgPool>, t_line: Vec<u8>, week_day: Some(u8)) -> impl Responder {
     // Query Logic
     // Idea: Construct a query bit by bit depending on input
 
-    let mut dyn_query = String::from("SELECT  * FROM arrivals WHERE ");
+    let mut dyn_query = QueryBuilder::new("SELECT * FROM arrivals WHERE tram_line = ");
 
-    if type_arr.len() == 1 {
-        dyn_query.push_str(&format!("tram_line = {}", type_arr[0]));
+    if t_line.len() == 1 {
+        dyn_query.push_bind(t_line[0]);
+    } else {
+        dyn_query.push_bind(t_line[0]);
+        dyn_query.push("OR tram_line = ");
+        dyn_query.push_bind(t_line[1]);
+    } // Should be fine for tramline?
+
+    if let Some(week_day) {
+        dyn_query.push("AND week_day = ");
+        dyn_query.push_bind(week_day);
     }
 
+    dyn_query.build().sql().into();
 
-    // Check: https://stackoverflow.com/questions/74956100/how-to-build-safe-dynamic-query-with-sqlx-in-rust
-    // lappy ded ;-;
+    // We don't talk about this
+    // and idk if `query_as!()` will take a QueryBuilder
     let arrivals = String::from("AIDS");
+
+    // Idk what to do, can't test with db cuz no .env xdxd
+    // linly pls i never made an api before and royal son doesn't count
 
 	dbg!(&arrivals);
 	HttpResponse::Ok()
