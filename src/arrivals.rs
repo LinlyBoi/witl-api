@@ -30,37 +30,34 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
 }
 
 #[get("specific")]
-async fn show_specific(db_pool: Data<PgPool>, t_line: Data<Vec<i8>>, week_day: Data<i8>) -> impl Responder {
+async fn show_specific(db_pool: Data<PgPool>, t_line: Data<i32>, week_day: Data<i32>) -> impl Responder {
     // Query Logic
     // Idea: Construct a query bit by bit depending on input
     // GUESS NOT
 
-    let mut dyn_query = QueryBuilder::new("SELECT * FROM arrivals WHERE tram_line = ");
+    // Extract data and match nullables
+    let tram_line: i32 = match t_line.into() {
+        Some(num) => **num,
+        None => 1 as i32
 
-    // Delet cuz we hardcoding
-    if t_line.len() == 1 {
-        dyn_query.push_bind(t_line[0]);
-    } else {
-        dyn_query.push_bind(t_line[0]);
-        dyn_query.push("OR tram_line = ");
-        dyn_query.push_bind(t_line[1]);
-    } // Should be fine for tramline?
-
-    // Murder this (And me possibly)
-    dyn_query.push("AND week_day = ");
-    // Yes ik it's giving an encoding error, no i dont know how to fix, just nuke it
-    dyn_query.push_bind(week_day);
-
-    dyn_query.build().sql().into();
+    };
+    let day =  match week_day.into() {
+        Some(num) => **num,
+        None => 1 as i32,
+    };
+    //Le query
+    let arrivals = query_as!(Arrival, "SELECT * FROM arrivals WHERE tram_line = $1 AND week_day = $2", tram_line, day)
+        .fetch_all(db_pool.get_ref())
+        .await
+        .expect("Could not fetch arrivals");
 
     // We don't talk about this
     // and idk if `query_as!()` will take a QueryBuilder
     let arrivals = String::from("AIDS");
 
-    // Idk what to do, can't test with db cuz no .env xdxd
-    // linly pls i never made an api before and royal son doesn't count
+    // Delet cuz we hardcoding
 
-	dbg!(&arrivals);
+	// dbg!(&arrivals);
 	HttpResponse::Ok()
         .content_type("application/json")
         .json(arrivals)
