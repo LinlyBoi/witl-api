@@ -35,12 +35,12 @@ async fn show_specific(db_pool: Data<PgPool>, t_line: Data<i32>, week_day: Data<
     // Extract data and match nullables
     let tram_line: i32 = match t_line.into() {
         Some(num) => **num,
-        None => 1 as i32
+        None => 1
 
     };
     let day =  match week_day.into() {
         Some(num) => **num,
-        None => 1 as i32,
+        None => 1,
     };
     //Le query
     let arrivals = query_as!(Arrival, "SELECT * FROM arrivals WHERE tram_line = $1 AND week_day = $2", tram_line, day)
