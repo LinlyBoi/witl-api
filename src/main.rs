@@ -1,5 +1,5 @@
 use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use witl_api::*;
 #[post("/echo")]
 async fn echo(req_body: String) -> impl Responder {
