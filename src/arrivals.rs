@@ -56,3 +56,14 @@ async fn show_specific(db_pool: Data<PgPool>, filter: web::Query<ArrivalFilter>)
         .content_type("application/json")
         .json(arrivals)
 }
+#[post("new")]
+async fn insert_arrival(db_pool: Data<PgPool>, arrival: web::Query<Arrival>) -> impl Responder {
+    query!(
+        "INSERT INTO arrivals (time_of_day,week_day,tram_line,direction) VALUES ($1, $2, $3, $4)",
+        arrival.time_of_day,
+        arrival.week_day,
+        arrival.tram_line,
+        arrival.direction
+    ).execute(db_pool.get_ref()).await.expect("I shat");
+    HttpResponse::Ok().body("inserted")
+}
