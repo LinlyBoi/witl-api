@@ -17,7 +17,7 @@ pub struct Arrival {
     direction: bool,
 }
 
-use sqlx::PgPool;
+use sqlx::{PgPool, query_as};
 use web::Data;
 #[get("all")]
 async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
