@@ -28,6 +28,10 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
         .content_type("application/json")
         .json(arrivals)
 }
+struct ArrivalFilter {
+    tram_line: i32,
+    week_day: i32,
+}
 
 #[get("specific")]
 async fn show_specific(db_pool: Data<PgPool>, t_line: Data<i32>, week_day: Data<i32>) -> impl Responder {
