@@ -31,9 +31,6 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
 
 #[get("specific")]
 async fn show_specific(db_pool: Data<PgPool>, t_line: Data<i32>, week_day: Data<i32>) -> impl Responder {
-    // Query Logic
-    // Idea: Construct a query bit by bit depending on input
-    // GUESS NOT
 
     // Extract data and match nullables
     let tram_line: i32 = match t_line.into() {
@@ -51,9 +48,6 @@ async fn show_specific(db_pool: Data<PgPool>, t_line: Data<i32>, week_day: Data<
         .await
         .expect("Could not fetch arrivals");
 
-    // We don't talk about this
-    // and idk if `query_as!()` will take a QueryBuilder
-    let arrivals = String::from("AIDS");
 
     // Delet cuz we hardcoding
 
