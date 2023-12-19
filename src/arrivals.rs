@@ -16,7 +16,7 @@ pub struct Arrival {
 }
 
 use web::Data;
-use sqlx::{PgPool, query_as, query};
+use sqlx::{PgPool, query_as, QueryBuilder, Execute};
 #[get("all")]
 async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
     let arrivals = query_as!(Arrival, r#"SELECT * FROM arrivals"#)
@@ -30,12 +30,14 @@ async fn show_arrivals(db_pool: Data<PgPool>) -> impl Responder {
 }
 
 #[get("specific")]
-async fn show_specific(db_pool: Data<PgPool>, t_line: Vec<u8>, week_day: Some(u8)) -> impl Responder {
+async fn show_specific(db_pool: Data<PgPool>, t_line: Data<Vec<i8>>, week_day: Data<i8>) -> impl Responder {
     // Query Logic
     // Idea: Construct a query bit by bit depending on input
+    // GUESS NOT
 
     let mut dyn_query = QueryBuilder::new("SELECT * FROM arrivals WHERE tram_line = ");
 
+    // Delet cuz we hardcoding
     if t_line.len() == 1 {
         dyn_query.push_bind(t_line[0]);
     } else {
@@ -44,10 +46,10 @@ async fn show_specific(db_pool: Data<PgPool>, t_line: Vec<u8>, week_day: Some(u8
         dyn_query.push_bind(t_line[1]);
     } // Should be fine for tramline?
 
-    if let Some(week_day) {
-        dyn_query.push("AND week_day = ");
-        dyn_query.push_bind(week_day);
-    }
+    // Murder this (And me possibly)
+    dyn_query.push("AND week_day = ");
+    // Yes ik it's giving an encoding error, no i dont know how to fix, just nuke it
+    dyn_query.push_bind(week_day);
 
     dyn_query.build().sql().into();
 
