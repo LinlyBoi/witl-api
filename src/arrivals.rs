@@ -1,10 +1,11 @@
-use actix_web::{get, web, HttpResponse, Responder, post};
+use actix_web::{get, web::{self, Json}, HttpResponse, Responder, post};
 
 pub fn init_arrivals_scope() -> actix_web::Scope {
     let scope = web::scope("/arrivals")
         .service(show_arrivals)
         .service(show_specific)
-        .service(insert_arrival);
+        .service(insert_arrival)
+        .service(insert_arrival_json);
     scope
 }
 use chrono::NaiveTime;
@@ -62,6 +63,18 @@ async fn show_specific(db_pool: Data<PgPool>, filter: web::Query<ArrivalFilter>)
 }
 #[post("new")]
 async fn insert_arrival(db_pool: Data<PgPool>, arrival: web::Query<Arrival>) -> impl Responder {
+    query!(
+        "INSERT INTO arrivals (time_of_day,week_day,tram_line,direction) VALUES ($1, $2, $3, $4)",
+        arrival.time_of_day,
+        arrival.week_day,
+        arrival.tram_line,
+        arrival.direction
+    ).execute(db_pool.get_ref()).await.expect("I shat");
+    HttpResponse::Ok().body("inserted")
+}
+
+#[post("insert")]
+async fn insert_arrival_json(db_pool: Data<PgPool>, arrival: Json<Arrival>) -> impl Responder {
     query!(
         "INSERT INTO arrivals (time_of_day,week_day,tram_line,direction) VALUES ($1, $2, $3, $4)",
         arrival.time_of_day,
